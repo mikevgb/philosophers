@@ -6,7 +6,7 @@
 #    By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/17 21:54:22 by mvillaes          #+#    #+#              #
-#    Updated: 2021/06/17 22:18:30 by mvillaes         ###   ########.fr        #
+#    Updated: 2021/06/18 18:14:11 by mvillaes         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ NAME = philo
 
 SRCS = 	main.c \
 		parse.c \
+		thread.c \
 		./utils/ft_putstr.c \
 		./utils/ft_isdigit.c \
 		./utils/ft_bzero.c \

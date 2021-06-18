@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 21:59:39 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/06/17 22:23:14 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/06/18 17:45:07 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ int	ft_atoi(char const *str)
 	else if (*str == '+')
 		str++;
 	if (!check_value(*str))
-		ft_putstr("Error: Bad input\n");
+		ft_put_error("Bad input");
 	while (ft_isdigit(*str))
 		res = (res * base) + (*str++ - 48);
 	if (res < 2147483648)
 		return ((int)res * sign);
-	ft_putstr("Error: Bad input\n");
+	ft_put_error("Bad input");
 	return (0);
 }

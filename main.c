@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 21:36:19 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/06/17 22:27:16 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/06/18 19:55:09 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,10 @@ int	main(int argc, char **argv)
 
 	ft_bzero(&data, sizeof(t_data));
 	data.total_arg = argc - 1;
-	if (data.total_arg != 4 || data.total_arg > 5)
-	{
-		ft_putstr("Error: Incorrect number of arguments\n");
-		exit (1);
-	}
 	parse(argv, &data);
 	print_input(&data);
+
+	philo(&data);
+	pthread_exit(NULL);
 	return (0);
 }

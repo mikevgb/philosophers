@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr.c                                        :+:      :+:    :+:   */
+/*   allo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/17 21:48:17 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/06/18 17:43:32 by mvillaes         ###   ########.fr       */
+/*   Created: 2021/06/18 19:47:18 by mvillaes          #+#    #+#             */
+/*   Updated: 2021/06/18 20:04:15 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "philo.h"
 
-void	ft_putstr(char *str)
+int	alloc_philos(t_data *data)
 {
-	while (*str)
-		write(1, str++, 1);
-}
+	int	*philo;
 
-void	ft_put_error(char *str)
-{
-	write(2, "Error: ", 8);
-	while (*str)
-		write(2, str++, 1);
-	write(2, "\n", 2);
-	exit (1);
+	philo = (int)malloc(data->n_philos * sizeof(int));
+	if (philo == NULL)
+		ft_put_error("philo malloc failed");
+	return (philo);
 }
