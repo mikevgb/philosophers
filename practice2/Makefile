@@ -6,14 +6,15 @@
 #    By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/17 21:54:22 by mvillaes          #+#    #+#              #
-#    Updated: 2021/07/21 21:25:55 by mvillaes         ###   ########.fr        #
+#    Updated: 2021/07/23 20:50:59 by mvillaes         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
 SRCS = 	philo.c \
-		threads_mutex.c
+		threads_mutex.c \
+		utils.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -34,6 +35,9 @@ fclean: clean
 
 debug:
 	gcc $(CFLAG) $(SANIT) $(SRCS) -o $(NAME)
+
+# rebug:
+# 	fclean debug
 
 re: fclean all
 
