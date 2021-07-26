@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/23 20:35:51 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/24 21:58:46 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,16 @@
 
 typedef struct s_utils{
 	pthread_mutex_t *print;
+	int				t_arg;
 	int				n_philos;
-	int				t_eat;
-	int				t_sleep;
+	useconds_t		t_eat;
+	useconds_t		t_sleep;
+	int				m_eat;
 	int				t_die;
 }	t_utils;
 
 typedef struct s_values{
+	int				t_arg;
 	int				index;
 	uint64_t		time;
 	pthread_t 		*philos;
@@ -49,8 +52,16 @@ void	singer_mutex(t_values *values);
 
 /* utils.c */
 
-void	ft_sleep(long i);
+// void	ft_sleep(useconds_t i);
 void	singer(t_values *values, char *str);
 void	philo_sleep(t_values *values);
 void	chronos(t_values *values);
+void	parse(char **argv, t_values *val);
 
+/* utils folder */
+
+int	ft_atoi(char const *str);
+void	*ft_bzero(void *ft, size_t i);
+int	ft_isdigit(int c);
+void	ft_putstr(char *str);
+void	ft_put_error(char *str);

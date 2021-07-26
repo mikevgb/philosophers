@@ -6,106 +6,81 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/23 21:06:18 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/24 21:59:05 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	eating(t_values *values, int odd_or_even)
+void	eating(t_values *val, int odd_or_even)
 {
-	singer(values, "🥩 is eating");
-	ft_sleep(2000);
+	singer(val, "🥩 is eating");
+	usleep(val->utils.t_eat);
 	if (!odd_or_even)
 	{
-		if (values->index == 0)
-			pthread_mutex_unlock(*(&values->knife + values->utils.n_philos));
-		else 
-			pthread_mutex_unlock(*(&values->knife) - 1);
-		pthread_mutex_unlock(*(&values->knife));
+		pthread_mutex_unlock(*(&val->knife) + 1 % 5);
+		pthread_mutex_unlock(*(&val->knife));
 	}	
 	else
 	{
-		pthread_mutex_unlock(*(&values->knife));
-		pthread_mutex_unlock(*(&values->knife) - 1);
-	}
-	singer(values, "⚔️  let knifes");
-}
-
-int		lock_knifes(t_values *values, int flag)
-{
-	if (!flag)
-	{
-
-		pthread_mutex_lock(*(&values->knife));
-		singer(values, "🗡  locked right knife");
-		return (1);
-	}
-	else
-	{
-		if (values->index == 0)
-		{
-			pthread_mutex_lock(*(&values->knife + values->utils.n_philos));
-			singer(values, "🔪 locked left knife");
-		}
-		else
-		{
-			pthread_mutex_lock(*(&values->knife) - 1);
-			singer(values, "🔪 locked left knife");
-		}
-		// pthread_mutex_lock(*(&values->knife + 1 % 6));
-		// singer(values, "🔪 locked left knife");
-		return (1);
+		pthread_mutex_unlock(*(&val->knife));
+		pthread_mutex_unlock(*(&val->knife) + 1 % 5);
 	}
 }
 
-void	eat(t_values *values)
+void	dirty_eat(t_values *val)
 {
 	int odd_or_even;
 
-	odd_or_even = values->index % 2;
+	odd_or_even = val->index % 2;
 	if (!odd_or_even)
 	{
-		if (lock_knifes(values, 0) && lock_knifes(values, 1))
-			eating(values, odd_or_even);
+		pthread_mutex_lock(*(&val->knife));
+		pthread_mutex_lock(*(&val->knife) + 1 % 5);
+		singer(val, "⚔️  locked knifes");
+		eating(val, odd_or_even);
 	}
 	else
 	{
-		if (lock_knifes(values, 1) && lock_knifes(values, 0))
-			eating(values, odd_or_even);
+		pthread_mutex_lock(*(&val->knife) + 1 % 5);
+		pthread_mutex_lock(*(&val->knife));
+		singer(val, "⚔️  locked knifes");
+		eating(val, odd_or_even);
 	}
 }
 
 void	*loop(void *s_truct)
 {
 	t_values *val;
+	int i;
 	val = (t_values *)s_truct;
 	
 	val->time = 0;
+	i = 0;
 	chronos(val);
 	val->start = val->time;
-	while (1)
+	while (i < val->utils.m_eat)
 	{
-		eat(val);
+		dirty_eat(val);
 		philo_sleep(val);
-		singer(val, "🤯 started thinking");
+		singer(val, "🤯 is thinking");
+		i++;
 	}
 	return (NULL);
 }
 
 int	main(void)
 {
-	t_values values;
+	t_values val;
 	
-	// bzero(&values, sizeof(t_values)); //this may go on struct array creation
-	values.utils.n_philos = 6;
-	values.utils.t_eat = 2000;
-	values.utils.t_sleep = 1000;
-	values.utils.t_die = 400;
-
-	make_threads(&values);
-	join_threads(&values);
-	pthread_mutex_destroy(values.knife);
-	pthread_detach(*values.philos);
+	// printf("argc = %i\n", argc);
+	// val.utils.t_arg = argc - 1;
+	// parse(argv, &val);
+	
+	val.utils.n_philos = 5;
+	make_threads(&val);
+	join_threads(&val);
+	pthread_mutex_destroy(val.knife);
+	pthread_detach(*val.philos);
 	return (0);
 }

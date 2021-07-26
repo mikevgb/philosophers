@@ -6,7 +6,7 @@
 #    By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/17 21:54:22 by mvillaes          #+#    #+#              #
-#    Updated: 2021/07/23 20:50:59 by mvillaes         ###   ########.fr        #
+#    Updated: 2021/07/24 21:52:32 by mvillaes         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,11 @@ NAME = philo
 
 SRCS = 	philo.c \
 		threads_mutex.c \
-		utils.c
+		utils.c \
+		utils/atoi_tuned.c \
+		utils/ft_bzero.c \
+		utils/ft_isdigit.c \
+		utils/ft_put.c
 
 OBJ = $(SRC:.c=.o)
 

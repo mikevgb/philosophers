@@ -6,36 +6,42 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/23 17:11:38 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/23 21:04:56 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/24 21:52:20 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_sleep(long i)
+void	singer(t_values *val, char *str)
 {
-	long	sleep_time;
-
-	sleep_time = i * 1000;
-	usleep(sleep_time);
+	chronos(val);
+	pthread_mutex_lock(*(&val->utils.print));
+	printf("[%04llu] %i %s\n",val->time - val->start, val->index + 1, str);
+	pthread_mutex_unlock(*(&val->utils.print));
 }
 
-void	singer(t_values *values, char *str)
+void	philo_sleep(t_values *val)
 {
-	chronos(values);
-	pthread_mutex_lock(values->utils.print);
-	printf("[%llu] Philo %i %s\n",values->time - values->start, values->index, str);
-	pthread_mutex_unlock(values->utils.print);
+	singer(val, "🙈 is sleeping");
+	usleep(val->utils.t_sleep);
 }
 
-void	philo_sleep(t_values *values)
+void	chronos(t_values *val)
 {
-	singer(values, "🙈 is sleeping");
-	ft_sleep(1500);
+	gettimeofday(&val->end, NULL);
+	val->time = ((val->end.tv_sec) * (uint64_t)1000 + (val->end.tv_usec) / 1000);
 }
 
-void	chronos(t_values *values)
+void	parse(char **argv, t_values *val)
 {
-	gettimeofday(&values->end, NULL);
-	values->time = ((values->end.tv_sec) * (uint64_t)1000 + (values->end.tv_usec) / 1000);
+	if (val->t_arg < 4)
+		ft_put_error("Missing arguments");
+	if (val->t_arg > 5)
+		ft_put_error("Too many arguments");
+	val->utils.n_philos = ft_atoi(argv[1]);
+	val->utils.t_die = ft_atoi(argv[2]);
+	val->utils.t_eat = ft_atoi(argv[3]);
+	val->utils.t_sleep = ft_atoi(argv[4]);
+	if (val->t_arg > 4)
+		val->utils.m_eat = ft_atoi(argv[5]);
 }
