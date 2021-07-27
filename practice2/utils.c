@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/23 17:11:38 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/24 21:52:20 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/27 21:05:27 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 void	singer(t_values *val, char *str)
 {
 	chronos(val);
+	death(val);
 	pthread_mutex_lock(*(&val->utils.print));
+	
 	printf("[%04llu] %i %s\n",val->time - val->start, val->index + 1, str);
 	pthread_mutex_unlock(*(&val->utils.print));
 }

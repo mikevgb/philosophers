@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/24 21:58:46 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/27 21:55:00 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include "stdlib.h"
 #include "sys/time.h"
 #include "string.h" //REMOVE, FOR BZERO
-
-// #define L_KNIFE 1 % 5
 
 typedef struct s_utils{
 	pthread_mutex_t *print;
@@ -30,6 +28,9 @@ typedef struct s_utils{
 }	t_utils;
 
 typedef struct s_values{
+	uint64_t		last_meal;
+	uint64_t		death;
+	int				c_eat;
 	int				t_arg;
 	int				index;
 	uint64_t		time;
@@ -42,13 +43,15 @@ typedef struct s_values{
 
 int		main(void);
 void	*loop(void *s_truct);
+void	death(t_values *val);
 
 /* threads_mutex.c */
 
-void	make_mutex(t_values *values);
-void	make_threads(t_values *values);
+void	fork_mutex(t_values *values);
+void	philo_threads(t_values *values);
 void	join_threads(t_values *values);
 void	singer_mutex(t_values *values);
+void	death_thread(t_values *values);
 
 /* utils.c */
 
