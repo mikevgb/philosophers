@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/27 21:55:00 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/30 17:27:45 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@
 #include "stdlib.h"
 #include "sys/time.h"
 #include "string.h" //REMOVE, FOR BZERO
+
+typedef struct s_index{
+	int index;
+}	t_index;
 
 typedef struct s_utils{
 	pthread_mutex_t *print;
@@ -28,28 +32,31 @@ typedef struct s_utils{
 }	t_utils;
 
 typedef struct s_values{
+	int				odd_or_even;
 	uint64_t		last_meal;
-	uint64_t		death;
+	// uint64_t		death;
 	int				c_eat;
 	int				t_arg;
 	int				index;
 	uint64_t		time;
+	pthread_t		*death;
 	pthread_t 		*philos;
-	pthread_mutex_t *knife;
+	pthread_mutex_t **knife;
 	t_utils			utils;
 	uint64_t		start;
 	struct timeval	end;
 }	t_values;
 
-int		main(void);
+
+int		main(int argc, char **argv);
 void	*loop(void *s_truct);
-void	death(t_values *val);
+void	*death(void *s_truct);
 
 /* threads_mutex.c */
 
 void	fork_mutex(t_values *values);
-void	philo_threads(t_values *values);
-void	join_threads(t_values *values);
+void	philo_threads(t_values **val);
+void	join_threads(t_values **values);
 void	singer_mutex(t_values *values);
 void	death_thread(t_values *values);
 

@@ -6,51 +6,35 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/27 22:28:27 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/30 17:32:58 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	eating(t_values *val, int odd_or_even)
-{
-	val->last_meal = val->time;
-	pthread_mutex_lock(*(&val->utils.print));
-	printf("[%04llu] %i %llu <-last meal\n",val->time - val->start, val->index + 1, val->last_meal - val->start);
-	pthread_mutex_unlock(*(&val->utils.print));
-	singer(val, "🥩 is eating");
-	usleep(val->utils.t_eat);
-	if (!odd_or_even)
-	{
-		pthread_mutex_unlock(*(&val->knife) + 1 % 5);
-		pthread_mutex_unlock(*(&val->knife));
-	}	
-	else
-	{	
-		pthread_mutex_unlock(*(&val->knife));
-		pthread_mutex_unlock(*(&val->knife) + 1 % 5);
-	}
-}
-
 void	dirty_eat(t_values *val)
 {
-	int odd_or_even;
-
-	odd_or_even = val->index % 2;
-	if (!odd_or_even)
+	if (!val->odd_or_even)
 	{
-		pthread_mutex_lock(*(&val->knife));
-		pthread_mutex_lock(*(&val->knife) + 1 % 5);
-		singer(val, "⚔️  locked knifes");
-		eating(val, odd_or_even);
+		pthread_mutex_lock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
+		singer(val, "⚔️  locked right knife");
+		pthread_mutex_lock(val->knife[val->index]);
+		singer(val, "⚔️  locked left knife");
+		singer(val, "🥩 is eating");
+		usleep(val->utils.t_eat);
+		pthread_mutex_unlock(val->knife[val->index]);
+		pthread_mutex_unlock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
 	}
 	else
 	{
-		pthread_mutex_lock(*(&val->knife) + 1 % 5);
-		pthread_mutex_lock(*(&val->knife));
-		
-		singer(val, "⚔️  locked knifes");
-		eating(val, odd_or_even);
+		pthread_mutex_lock(val->knife[val->index]);
+		singer(val, "⚔️  locked left knife");
+		pthread_mutex_lock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
+		singer(val, "⚔️  locked right knife");
+		singer(val, "🥩 is eating");
+		usleep(val->utils.t_eat);
+		pthread_mutex_unlock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
+		pthread_mutex_unlock(val->knife[val->index]);
 	}
 }
 
@@ -58,7 +42,7 @@ void	*loop(void *s_truct)
 {
 	t_values *val;
 	val = (t_values *)s_truct;
-	
+
 	val->time = 0;
 	chronos(val);
 	val->start = val->time;
@@ -115,44 +99,67 @@ void	*loop(void *s_truct)
 
 
 
-void		death(t_values *val)
+void		*death(void *s_truct)
 {
+	t_values *val;
+	val = (t_values *)s_truct;
 	// uint64_t death;
 	int time;
 	int death;
 	int t_die;
 	int tmp;
 
-	t_die = val->utils.t_die / 1000;
-	time = val->time - val->start;
-	// printf("time %d\n", time);
-	death = t_die - time;
-	tmp = (val->last_meal - val->start) + t_die;
-	// printf("death %d\n", death);
-	if (tmp > time)
+	
+	while(1)
 	{
-		pthread_mutex_lock(*(&val->utils.print));
-		printf("[%04llu] %i 🏴‍☠️ died\n",val->time - val->start, val->index + 1);
-	// 	pthread_mutex_destroy(val->knife);
-	// 	pthread_mutex_destroy(val->utils.print);
-	// 	pthread_detach(*val->philos);
+		t_die = val->utils.t_die / 1000;
+		time = val->time - val->start;
+		// printf("time %d\n", time);
+		death = t_die - time;
+		tmp = (val->last_meal - val->start) + t_die;
+		// printf("death %d\n", death);
+		if (tmp > time)
+		{
+			pthread_mutex_lock(*(&val->utils.print));
+			printf("[%04llu] %i 🏴‍☠️ died\n",val->time - val->start, val->index + 1);
+		// 	pthread_mutex_destroy(val->knife);
+		// 	pthread_mutex_destroy(val->utils.print);
+		// 	pthread_detach(*val->philos);
+		}
 	}
+	
+	return (NULL);
 }
 
-int	main(void)
+int	main(int argc, char **argv)
 {
-	t_values val;
+	t_values **val;
+	int i;
+	int x;
+
+	i = argc;
+	x = 0;
 	
-	bzero(&val, sizeof(t_values));
+	// bzero(val, sizeof(t_values));
 	// printf("argc = %i\n", argc);
 	// val.utils.t_arg = argc - 1;
 	// parse(argv, &val);
 	
-	val.utils.n_philos = 3;
+	// parse(argv, val);
+	val = malloc(sizeof(t_values*) * ft_atoi(argv[1]));
 
-	philo_threads(&val);
-	join_threads(&val);
-	pthread_mutex_destroy(val.knife);
-	pthread_detach(*val.philos);
+	while ( x < ft_atoi(argv[1]))
+	{
+		val[x] = malloc(sizeof(t_values));
+		val[x]->utils.n_philos = ft_atoi(argv[1]);
+		x++;
+	}
+	// val->utils.n_philos = ft_atoi(argv[1]);
+	// val.utils.n_philos = argv;
+
+	philo_threads(val);
+	join_threads(val);
+	// pthread_mutex_destroy(val.knife);
+	// pthread_detach(*val.philos);
 	return (0);
 }
