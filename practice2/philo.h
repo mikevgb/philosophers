@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/30 17:27:45 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/31 22:38:35 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,17 @@
 #include "sys/time.h"
 #include "string.h" //REMOVE, FOR BZERO
 
-typedef struct s_index{
-	int index;
-}	t_index;
+
 
 typedef struct s_utils{
 	pthread_mutex_t *print;
+	pthread_mutex_t	*death;
 	int				t_arg;
 	int				n_philos;
-	useconds_t		t_eat;
-	useconds_t		t_sleep;
+	uint64_t		t_eat;
+	uint64_t		t_sleep;
 	int				m_eat;
-	int				t_die;
+	uint64_t			t_die;
 }	t_utils;
 
 typedef struct s_values{
@@ -39,7 +38,7 @@ typedef struct s_values{
 	int				t_arg;
 	int				index;
 	uint64_t		time;
-	pthread_t		*death;
+	
 	pthread_t 		*philos;
 	pthread_mutex_t **knife;
 	t_utils			utils;
@@ -50,7 +49,8 @@ typedef struct s_values{
 
 int		main(int argc, char **argv);
 void	*loop(void *s_truct);
-void	*death(void *s_truct);
+// void	*death(void *s_truct);
+void	death(t_values *val);
 
 /* threads_mutex.c */
 
@@ -58,14 +58,17 @@ void	fork_mutex(t_values *values);
 void	philo_threads(t_values **val);
 void	join_threads(t_values **values);
 void	singer_mutex(t_values *values);
-void	death_thread(t_values *values);
+// void	death_thread(t_values *values);
+void	death_mutex(t_values *values);
 
 /* utils.c */
 
+// void	ft_putnbr_fd(int n, int fd);
+// void	ft_putchar_fd(char c, int fd);
 // void	ft_sleep(useconds_t i);
 void	singer(t_values *values, char *str);
 void	philo_sleep(t_values *values);
-void	chronos(t_values *values);
+void	chronos(t_values *values, int flag);
 void	parse(char **argv, t_values *val);
 
 /* utils folder */

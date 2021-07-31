@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/30 17:32:58 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/31 22:44:18 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,30 @@ void	dirty_eat(t_values *val)
 	if (!val->odd_or_even)
 	{
 		pthread_mutex_lock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
-		singer(val, "⚔️  locked right knife");
+		singer(val, "⚔️  locked knife");
 		pthread_mutex_lock(val->knife[val->index]);
-		singer(val, "⚔️  locked left knife");
+		singer(val, "⚔️  locked knife");
 		singer(val, "🥩 is eating");
+		chronos(val, 0);
 		usleep(val->utils.t_eat);
-		pthread_mutex_unlock(val->knife[val->index]);
 		pthread_mutex_unlock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
+		pthread_mutex_unlock(val->knife[val->index]);
 	}
 	else
 	{
 		pthread_mutex_lock(val->knife[val->index]);
-		singer(val, "⚔️  locked left knife");
+		singer(val, "⚔️  locked knife");
 		pthread_mutex_lock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
-		singer(val, "⚔️  locked right knife");
+		singer(val, "⚔️  locked knife");
 		singer(val, "🥩 is eating");
+		chronos(val, 0);
 		usleep(val->utils.t_eat);
-		pthread_mutex_unlock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
 		pthread_mutex_unlock(val->knife[val->index]);
+		pthread_mutex_unlock(val->knife[(((val->index) + 1) % val->utils.n_philos)]);
 	}
+	singer(val, "🙈 is sleeping");
+	usleep(val->utils.t_sleep);
+	singer(val, "🤯 is thinking");
 }
 
 void	*loop(void *s_truct)
@@ -44,91 +49,68 @@ void	*loop(void *s_truct)
 	val = (t_values *)s_truct;
 
 	val->time = 0;
-	chronos(val);
+	val->last_meal = 0;
+	chronos(val, 1);
+	// chronos(val, 0);
 	val->start = val->time;
 	while (1)
 	{
+		// death(val);
 		dirty_eat(val);
-		philo_sleep(val);
-		singer(val, "🤯 is thinking");
+		// philo_sleep(val);
+		// singer(val, "🤯 is thinking");
 	}
 	return (NULL);
 }
 
-// int		death(t_values *val)
+// void		*death(void *s_truct)
 // {
+// 	t_values *val;
+// 	val = (t_values *)s_truct;
 // 	int i;
-// 	int x;
-// 	uint64_t tmp1;
-// 	uint64_t tmp2;
-
-// 	tmp1 = 0;
-// 	tmp2 = 0;
-// 	i = 0;
-// 	x = 0;
-// 	val[i].death = val[i].utils.t_die;
 	
+// 	i = 0;
+// 	printf("hey %i\n", val->index);
 // 	while (1)
 // 	{
-// 		tmp2 = (val[i].time - val[i].start) + tmp1;
-// 		if (tmp2 > val[i].death)
+// 		chronos(val, 1);
+// 		if ((val[i].last_meal - val[i].start) + (val->utils.t_die / 1000) < (val[i].time - val[i].start))
 // 		{
-// 			singer(val, "🏴‍☠️ died");
-// 			pthread_mutex_destroy(val->knife);
-// 			pthread_detach(*val->philos);
-// 			break;
+// 			pthread_mutex_lock(*(&val->utils.print));
+// 			// chronos(val, 1);
+// 			// printf("time %llu t_die %llu\n", (val->time - val->start) + (val->utils.t_die / 1000), (val->time - val->start));
+// 			printf("[%04llu] %i 🏴‍☠️ died\n",(val[i].time - val[i].start), val[i].index);
+// 			// pthread_mutex_destroy(*val->knife);
+// 			// pthread_detach(*val->philos);
+// 			exit(1);
+// 			pthread_mutex_unlock(*(&val->utils.print));
+			
 // 		}
-// 		val[i].death += val[i].time;
-// 		tmp1 = val[i].time;
-// 		++i;
+// 		i++;
 // 		if (i > val->utils.n_philos)
 // 			i = 0;
-// 		if (val->utils.m_eat > 0)
-// 		{
-// 			if (val[i].c_eat > val->utils.m_eat)
-// 			{
-// 				pthread_detach(*val->philos);
-// 				pthread_mutex_destroy(val->knife);
-// 				break;
-// 			}
-// 		}
 // 	}
-// 	return (0);		
+// 	return (NULL);
 // }
 
-
-
-
-void		*death(void *s_truct)
+void	death(t_values *val)
 {
-	t_values *val;
-	val = (t_values *)s_truct;
-	// uint64_t death;
-	int time;
-	int death;
-	int t_die;
-	int tmp;
-
-	
-	while(1)
+	// pthread_mutex_lock(*(&val->utils.print));
+	// printf("last_meal %llu t_die %llu, time %llu index %i\n", (val->last_meal) - (val->start), (val->utils.t_die / 1000), (val->time - val->start), val->index);
+	// pthread_mutex_unlock(*(&val->utils.print));
+	chronos(val, 1);
+	if ((val->last_meal - val->start) + (val->utils.t_die / 1000) < (val->time - val->start))
 	{
-		t_die = val->utils.t_die / 1000;
-		time = val->time - val->start;
-		// printf("time %d\n", time);
-		death = t_die - time;
-		tmp = (val->last_meal - val->start) + t_die;
-		// printf("death %d\n", death);
-		if (tmp > time)
-		{
-			pthread_mutex_lock(*(&val->utils.print));
-			printf("[%04llu] %i 🏴‍☠️ died\n",val->time - val->start, val->index + 1);
-		// 	pthread_mutex_destroy(val->knife);
-		// 	pthread_mutex_destroy(val->utils.print);
-		// 	pthread_detach(*val->philos);
-		}
+		pthread_mutex_lock(*(&val->utils.print));
+		// chronos(val, 1);
+		// printf("time %llu t_die %llu\n", (val->time - val->start) + (val->utils.t_die / 1000), (val->time - val->start));
+		printf("[%04llu] %i 🏴‍☠️ died\n",(val->time - val->start), val->index);
+		// pthread_mutex_destroy(*val->knife);
+		// pthread_detach(*val->philos);
+		exit(1);
+		pthread_mutex_unlock(*(&val->utils.print));
+		
 	}
-	
-	return (NULL);
 }
 
 int	main(int argc, char **argv)
@@ -159,6 +141,7 @@ int	main(int argc, char **argv)
 
 	philo_threads(val);
 	join_threads(val);
+	// death_thread(*val);
 	// pthread_mutex_destroy(val.knife);
 	// pthread_detach(*val.philos);
 	return (0);

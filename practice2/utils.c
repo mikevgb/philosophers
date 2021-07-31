@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/23 17:11:38 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/30 16:56:32 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/07/31 23:17:41 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,17 @@
 
 void	singer(t_values *val, char *str)
 {
-	
+	// pthread_mutex_lock(*(&val->utils.death));
 	// death(val);
-	chronos(val);
+	chronos(val, 1);
+	// pthread_mutex_unlock(*(&val->utils.death));
 	pthread_mutex_lock(*(&val->utils.print));
-	
 	printf("[%04llu] %i %s\n",val->time - val->start, val->index, str);
-	// printf("[%04llu] %i %llu <-last meal %i N_philos\n",val->time - val->start, val->index + 1, val->last_meal - val->start, val->utils.n_philos);
 	pthread_mutex_unlock(*(&val->utils.print));
+	pthread_mutex_lock(*(&val->utils.death));
+	death(val);
+	// chronos(val, 1);
+	pthread_mutex_unlock(*(&val->utils.death));
 }
 
 void	philo_sleep(t_values *val)
@@ -30,10 +33,13 @@ void	philo_sleep(t_values *val)
 	usleep(val->utils.t_sleep);
 }
 
-void	chronos(t_values *val)
+void	chronos(t_values *val, int flag)
 {
 	gettimeofday(&val->end, NULL);
-	val->time = ((val->end.tv_sec) * (uint64_t)1000 + (val->end.tv_usec) / 1000);
+	if (!flag)
+		val->last_meal = ((((val->end.tv_sec) * (uint64_t)1000 + (val->end.tv_usec) / 1000)));
+	else
+		val->time = ((((val->end.tv_sec) * (uint64_t)1000 + (val->end.tv_usec) / 1000)));
 }
 
 void	parse(char **argv, t_values *val)
