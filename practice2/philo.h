@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/31 22:38:35 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/03 20:40:23 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,15 @@ typedef struct s_utils{
 	uint64_t		t_eat;
 	uint64_t		t_sleep;
 	int				m_eat;
-	uint64_t			t_die;
+	uint64_t		t_die;
 }	t_utils;
 
 typedef struct s_values{
 	int				odd_or_even;
 	uint64_t		last_meal;
+	int				death_flag;
 	// uint64_t		death;
 	int				c_eat;
-	int				t_arg;
 	int				index;
 	uint64_t		time;
 	

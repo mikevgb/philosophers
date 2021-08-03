@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/31 22:44:18 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/03 20:40:17 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,22 @@ void	*loop(void *s_truct)
 {
 	t_values *val;
 	val = (t_values *)s_truct;
+	int	eat_count;
 
 	val->time = 0;
 	val->last_meal = 0;
+	eat_count = 0;
 	chronos(val, 1);
-	// chronos(val, 0);
 	val->start = val->time;
 	while (1)
 	{
-		// death(val);
+		if(val->utils.m_eat > 0)
+		{
+			eat_count++;
+			if (eat_count > val->utils.m_eat)
+				break;
+		}
 		dirty_eat(val);
-		// philo_sleep(val);
-		// singer(val, "🤯 is thinking");
 	}
 	return (NULL);
 }
@@ -99,17 +103,25 @@ void	death(t_values *val)
 	// printf("last_meal %llu t_die %llu, time %llu index %i\n", (val->last_meal) - (val->start), (val->utils.t_die / 1000), (val->time - val->start), val->index);
 	// pthread_mutex_unlock(*(&val->utils.print));
 	chronos(val, 1);
-	if ((val->last_meal - val->start) + (val->utils.t_die / 1000) < (val->time - val->start))
+	if (((val->last_meal - val->start) + (val->utils.t_die / 1000) < (val->time - val->start)) || val->utils.n_philos < 2)
 	{
+		if (val->utils.n_philos < 2)
+		{
+			usleep(val->utils.t_die);
+			chronos(val, 1);
+		}
+			
 		pthread_mutex_lock(*(&val->utils.print));
 		// chronos(val, 1);
 		// printf("time %llu t_die %llu\n", (val->time - val->start) + (val->utils.t_die / 1000), (val->time - val->start));
 		printf("[%04llu] %i 🏴‍☠️ died\n",(val->time - val->start), val->index);
-		// pthread_mutex_destroy(*val->knife);
-		// pthread_detach(*val->philos);
+		
 		exit(1);
 		pthread_mutex_unlock(*(&val->utils.print));
-		
+
+		// val->death_flag = 1;
+		// pthread_mutex_destroy(*val->knife);
+		// pthread_detach(*val->philos);
 	}
 }
 
@@ -122,9 +134,21 @@ int	main(int argc, char **argv)
 	i = argc;
 	x = 0;
 	
+	 if ((argc - 1) < 4)
+	 {
+		 ft_put_error("Missing arguments");
+		 return (1);
+	 }
+		
+	if ((argc - 1) > 5)
+	{
+		ft_put_error("Too many arguments");
+		return (1);
+	}
+		
 	// bzero(val, sizeof(t_values));
 	// printf("argc = %i\n", argc);
-	// val.utils.t_arg = argc - 1;
+	// val[x]->utils.t_arg = argc - 1;
 	// parse(argv, &val);
 	
 	// parse(argv, val);
@@ -133,14 +157,23 @@ int	main(int argc, char **argv)
 	while ( x < ft_atoi(argv[1]))
 	{
 		val[x] = malloc(sizeof(t_values));
+		bzero(val[x], sizeof(t_values));
+		val[x]->utils.t_arg = argc - 1;
 		val[x]->utils.n_philos = ft_atoi(argv[1]);
+		val[x]->utils.t_die = (ft_atoi(argv[2]) * 1000);
+		val[x]->utils.t_eat = (ft_atoi(argv[3]) * 1000);
+		val[x]->utils.t_sleep = (ft_atoi(argv[4]) * 1000);
+		if (val[x]->utils.t_arg > 4)
+			val[x]->utils.m_eat = ft_atoi(argv[5]);
 		x++;
 	}
+	// parse(argv, *val);
 	// val->utils.n_philos = ft_atoi(argv[1]);
 	// val.utils.n_philos = argv;
 
 	philo_threads(val);
 	join_threads(val);
+	system ("leaks philo");
 	// death_thread(*val);
 	// pthread_mutex_destroy(val.knife);
 	// pthread_detach(*val.philos);

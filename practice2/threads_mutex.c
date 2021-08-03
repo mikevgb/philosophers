@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 21:22:53 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/31 23:11:37 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/03 19:29:27 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,9 @@ void	philo_threads(t_values **val)
 	t_knife = (pthread_mutex_t**)malloc(sizeof(pthread_mutex_t*) * (*val)->utils.n_philos);
 	while(i < (*val)->utils.n_philos)
 	{
-		val[i]->utils.t_eat = 200 * 1000;
-		val[i]->utils.t_sleep = 200 * 1000;
-		val[i]->utils.t_die = 800 * 1000;
-		val[i]->utils.m_eat = 0;
 		val[i]->odd_or_even = i % 2;
 		val[i]->knife = t_knife;
 		val[i]->philos = malloc(sizeof(pthread_t));
-		// val[i]->death = malloc(sizeof(pthread_t));
 		val[i]->index = i;
 		val[i]->knife[i] = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(val[i]->knife[i], NULL);

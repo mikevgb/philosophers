@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/23 17:11:38 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/07/31 23:17:41 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/03 20:39:34 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,19 +39,20 @@ void	chronos(t_values *val, int flag)
 	if (!flag)
 		val->last_meal = ((((val->end.tv_sec) * (uint64_t)1000 + (val->end.tv_usec) / 1000)));
 	else
-		val->time = ((((val->end.tv_sec) * (uint64_t)1000 + (val->end.tv_usec) / 1000)));
+		val->time = ((((val->end.tv_sec) * (uint64_t)1000 + (val->end.tv_usec) / 1000)) - (val->utils.n_philos * 3));
 }
 
-void	parse(char **argv, t_values *val)
-{
-	// if (val->t_arg < 4)
-	// 	ft_put_error("Missing arguments");
-	// if (val->t_arg > 5)
-	// 	ft_put_error("Too many arguments");
-	val->utils.n_philos = ft_atoi(argv[1]);
-	// val->utils.t_die = ft_atoi(argv[2]);
-	// val->utils.t_eat = ft_atoi(argv[3]);
-	// val->utils.t_sleep = ft_atoi(argv[4]);
-	// if (val->t_arg > 4)
-	// 	val->utils.m_eat = ft_atoi(argv[5]);
-}
+// void	parse(char **argv, t_values *val)
+// {
+// 	// if (val->t_arg < 4)
+// 	// 	ft_put_error("Missing arguments");
+// 	// if (val->t_arg > 5)
+// 	// 	ft_put_error("Too many arguments");
+	
+// 	val->utils.n_philos = ft_atoi(argv[1]);
+// 	val->utils.t_die = ft_atoi(argv[2]);
+// 	val->utils.t_eat = ft_atoi(argv[3]);
+// 	val->utils.t_sleep = ft_atoi(argv[4]);
+// 	if (val->t_arg > 4)
+// 		val->utils.m_eat = ft_atoi(argv[5]);
+// }
