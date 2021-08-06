@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/03 20:40:23 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/06 21:02:31 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "sys/time.h"
-#include "string.h" //REMOVE, FOR BZERO
 
-
+// int d_flag;
 
 typedef struct s_utils{
 	pthread_mutex_t *print;
@@ -31,16 +30,13 @@ typedef struct s_utils{
 }	t_utils;
 
 typedef struct s_values{
+	pthread_t 		*philos;
+	int				**death_flag;
+	pthread_mutex_t **knife;
 	int				odd_or_even;
 	uint64_t		last_meal;
-	int				death_flag;
-	// uint64_t		death;
-	int				c_eat;
 	int				index;
 	uint64_t		time;
-	
-	pthread_t 		*philos;
-	pthread_mutex_t **knife;
 	t_utils			utils;
 	uint64_t		start;
 	struct timeval	end;
@@ -63,9 +59,6 @@ void	death_mutex(t_values *values);
 
 /* utils.c */
 
-// void	ft_putnbr_fd(int n, int fd);
-// void	ft_putchar_fd(char c, int fd);
-// void	ft_sleep(useconds_t i);
 void	singer(t_values *values, char *str);
 void	philo_sleep(t_values *values);
 void	chronos(t_values *values, int flag);

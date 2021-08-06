@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/03 20:40:17 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/06 21:03:20 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ void	*loop(void *s_truct)
 	eat_count = 0;
 	chronos(val, 1);
 	val->start = val->time;
-	while (1)
+	while (!val->death_flag)
 	{
-		if(val->utils.m_eat > 0)
+		if (val->utils.m_eat > 0)
 		{
 			eat_count++;
 			if (eat_count > val->utils.m_eat)
@@ -67,41 +67,11 @@ void	*loop(void *s_truct)
 	return (NULL);
 }
 
-// void		*death(void *s_truct)
-// {
-// 	t_values *val;
-// 	val = (t_values *)s_truct;
-// 	int i;
-	
-// 	i = 0;
-// 	printf("hey %i\n", val->index);
-// 	while (1)
-// 	{
-// 		chronos(val, 1);
-// 		if ((val[i].last_meal - val[i].start) + (val->utils.t_die / 1000) < (val[i].time - val[i].start))
-// 		{
-// 			pthread_mutex_lock(*(&val->utils.print));
-// 			// chronos(val, 1);
-// 			// printf("time %llu t_die %llu\n", (val->time - val->start) + (val->utils.t_die / 1000), (val->time - val->start));
-// 			printf("[%04llu] %i 🏴‍☠️ died\n",(val[i].time - val[i].start), val[i].index);
-// 			// pthread_mutex_destroy(*val->knife);
-// 			// pthread_detach(*val->philos);
-// 			exit(1);
-// 			pthread_mutex_unlock(*(&val->utils.print));
-			
-// 		}
-// 		i++;
-// 		if (i > val->utils.n_philos)
-// 			i = 0;
-// 	}
-// 	return (NULL);
-// }
-
-void	death(t_values *val)
+void		death(t_values *val)
 {
-	// pthread_mutex_lock(*(&val->utils.print));
-	// printf("last_meal %llu t_die %llu, time %llu index %i\n", (val->last_meal) - (val->start), (val->utils.t_die / 1000), (val->time - val->start), val->index);
-	// pthread_mutex_unlock(*(&val->utils.print));
+	int i;
+
+	i = 0;
 	chronos(val, 1);
 	if (((val->last_meal - val->start) + (val->utils.t_die / 1000) < (val->time - val->start)) || val->utils.n_philos < 2)
 	{
@@ -110,71 +80,67 @@ void	death(t_values *val)
 			usleep(val->utils.t_die);
 			chronos(val, 1);
 		}
-			
 		pthread_mutex_lock(*(&val->utils.print));
-		// chronos(val, 1);
-		// printf("time %llu t_die %llu\n", (val->time - val->start) + (val->utils.t_die / 1000), (val->time - val->start));
 		printf("[%04llu] %i 🏴‍☠️ died\n",(val->time - val->start), val->index);
-		
-		exit(1);
-		pthread_mutex_unlock(*(&val->utils.print));
-
+			// *(val->death_flag) = 1;
 		// val->death_flag = 1;
-		// pthread_mutex_destroy(*val->knife);
-		// pthread_detach(*val->philos);
+		// exit (1);
+		// d_flag = 1;
+		// while (i < val->utils.n_philos)
+		// {
+		// 	**(val[i].death_flag) = 1;
+		// 	i++;
+		// }
+		pthread_mutex_unlock(*(&val->utils.print));
+		// exit (1);
+
 	}
 }
 
 int	main(int argc, char **argv)
 {
 	t_values **val;
-	int i;
+	// int dead;
 	int x;
 
-	i = argc;
+	// dead = 0;
 	x = 0;
-	
-	 if ((argc - 1) < 4)
-	 {
-		 ft_put_error("Missing arguments");
-		 return (1);
-	 }
-		
+	if ((argc - 1) < 4)
+	{
+		ft_put_error("Missing arguments");
+		return (1);
+	}
 	if ((argc - 1) > 5)
 	{
 		ft_put_error("Too many arguments");
 		return (1);
 	}
-		
-	// bzero(val, sizeof(t_values));
-	// printf("argc = %i\n", argc);
-	// val[x]->utils.t_arg = argc - 1;
-	// parse(argv, &val);
-	
-	// parse(argv, val);
-	val = malloc(sizeof(t_values*) * ft_atoi(argv[1]));
+	if (ft_atoi(argv[1]) < 1)
+	{
+		ft_put_error("Missing philos");
+		return (1);
+	}
+	// d_flag = 0;
 
+	val = malloc(sizeof(t_values*) * ft_atoi(argv[1]) + 1);
+	
 	while ( x < ft_atoi(argv[1]))
 	{
 		val[x] = malloc(sizeof(t_values));
-		bzero(val[x], sizeof(t_values));
+		ft_bzero(val[x], sizeof(t_values));
+		// val[x]->death_flag = &dead;
 		val[x]->utils.t_arg = argc - 1;
 		val[x]->utils.n_philos = ft_atoi(argv[1]);
-		val[x]->utils.t_die = (ft_atoi(argv[2]) * 1000);
-		val[x]->utils.t_eat = (ft_atoi(argv[3]) * 1000);
-		val[x]->utils.t_sleep = (ft_atoi(argv[4]) * 1000);
+		val[x]->utils.t_die = ft_atoi(argv[2]) * 1000;
+		val[x]->utils.t_eat = ft_atoi(argv[3]) * 1000;
+		val[x]->utils.t_sleep = ft_atoi(argv[4]) * 1000;
 		if (val[x]->utils.t_arg > 4)
 			val[x]->utils.m_eat = ft_atoi(argv[5]);
 		x++;
 	}
-	// parse(argv, *val);
-	// val->utils.n_philos = ft_atoi(argv[1]);
-	// val.utils.n_philos = argv;
-
 	philo_threads(val);
 	join_threads(val);
 	system ("leaks philo");
-	// death_thread(*val);
 	// pthread_mutex_destroy(val.knife);
 	// pthread_detach(*val.philos);
 	return (0);

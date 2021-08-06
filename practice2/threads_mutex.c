@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 21:22:53 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/03 19:29:27 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/06 20:58:59 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	philo_threads(t_values **val)
 	while(i < (*val)->utils.n_philos)
 	{
 		val[i]->odd_or_even = i % 2;
+		// val[i]->death_flag = 0;
 		val[i]->knife = t_knife;
 		val[i]->philos = malloc(sizeof(pthread_t));
 		val[i]->index = i;
@@ -35,17 +36,9 @@ void	philo_threads(t_values **val)
 	while (i < (*val)->utils.n_philos)
 	{
 		pthread_create(val[i]->philos, NULL, loop, (void *)val[i]);
-		// pthread_create(val[i]->death, NULL, death, (void *)val[i]);
 		i++;
 	}		
 }
-
-// void	death_thread(t_values *val)
-// {
-// 	val->death = malloc(sizeof(pthread_t));
-// 	pthread_create(val->death, NULL, death, (void *)val);
-// 	// pthread_join(*val->death, NULL);
-// }
 
 void	join_threads(t_values **values)
 {
@@ -55,7 +48,6 @@ void	join_threads(t_values **values)
 	while(i < (*values)->utils.n_philos)
 	{
 		pthread_join(values[i]->philos[i], NULL);
-		// pthread_join(values[i]->death[i], NULL);
 		i++;
 	}
 }
