@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 21:22:53 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/06 20:58:59 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/07 20:11:03 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,23 @@
 
 void	philo_threads(t_values **val)
 {
-	int i;
-	pthread_mutex_t **t_knife;
+	int				i;
+	pthread_mutex_t	**t_knife;
 
 	i = 0;
-	t_knife = (pthread_mutex_t**)malloc(sizeof(pthread_mutex_t*) * (*val)->utils.n_philos);
-	while(i < (*val)->utils.n_philos)
+	t_knife = (pthread_mutex_t **)malloc(sizeof(pthread_mutex_t *) \
+	* (*val)->utils.n_philos);
+	while (i < (*val)->utils.n_philos)
 	{
 		val[i]->odd_or_even = i % 2;
-		// val[i]->death_flag = 0;
+		val[i]->death_flag = 0;
 		val[i]->knife = t_knife;
 		val[i]->philos = malloc(sizeof(pthread_t));
 		val[i]->index = i;
-		val[i]->knife[i] = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+		val[i]->knife[i] = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(val[i]->knife[i], NULL);
 		singer_mutex(val[i]);
-		death_mutex(val[i]);	
+		death_mutex(val[i]);
 		i++;
 	}
 	i = 0;
@@ -42,10 +43,10 @@ void	philo_threads(t_values **val)
 
 void	join_threads(t_values **values)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(i < (*values)->utils.n_philos)
+	while (i < (*values)->utils.n_philos)
 	{
 		pthread_join(values[i]->philos[i], NULL);
 		i++;
@@ -54,7 +55,7 @@ void	join_threads(t_values **values)
 
 void	singer_mutex(t_values *values)
 {
-	static pthread_mutex_t print;
+	static pthread_mutex_t	print;
 
 	pthread_mutex_init(&print, NULL);
 	values->utils.print = &print;
@@ -62,7 +63,7 @@ void	singer_mutex(t_values *values)
 
 void	death_mutex(t_values *values)
 {
-	static pthread_mutex_t death;
+	static pthread_mutex_t	death;
 
 	pthread_mutex_init(&death, NULL);
 	values->utils.death = &death;
