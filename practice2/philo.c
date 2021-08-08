@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/07 20:10:51 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/08 22:19:32 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	even_eat(t_values *val)
 	singer(val, "⚔️  locked knife");
 	singer(val, "🥩 is eating");
 	chronos(val, 0);
-	usleep(val->utils.t_eat);
+	hang_over(val, val->utils.t_eat);
 	pthread_mutex_unlock(val->knife[(((val->index) + 1) \
 	% val->utils.n_philos)]);
 	pthread_mutex_unlock(val->knife[val->index]);
@@ -36,7 +36,7 @@ static void	odd_eat(t_values *val)
 	singer(val, "⚔️  locked knife");
 	singer(val, "🥩 is eating");
 	chronos(val, 0);
-	usleep(val->utils.t_eat);
+	hang_over(val, val->utils.t_eat);
 	pthread_mutex_unlock(val->knife[val->index]);
 	pthread_mutex_unlock(val->knife[(((val->index) + 1) \
 	% val->utils.n_philos)]);
@@ -49,7 +49,7 @@ static void	dirty_eat(t_values *val)
 	else
 		odd_eat(val);
 	singer(val, "🙈 is sleeping");
-	usleep(val->utils.t_sleep);
+	hang_over(val, val->utils.t_sleep);
 	singer(val, "🤯 is thinking");
 }
 
@@ -102,6 +102,8 @@ int	main(int argc, char **argv)
 		x++;
 	}
 	philo_threads(val);
+	death(*val);
 	join_threads(val);
+	
 	return (0);
 }

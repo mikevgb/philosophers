@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/23 17:11:38 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/07 20:00:08 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/08 22:18:28 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,13 @@ void	singer(t_values *val, char *str)
 		printf("[%04llu] %i %s\n", val->time - val->start, val->index + 1, str);
 	}
 	pthread_mutex_unlock(*(&val->utils.print));
-	if (!*val->death_flag)
-	{
-		pthread_mutex_lock(*(&val->utils.death));
-		death(val);
-		pthread_mutex_unlock(*(&val->utils.death));
-	}
+}
+
+void	death_check(t_values *val)
+{
+	pthread_mutex_lock(*(&val->utils.death));
+	death(val);
+	pthread_mutex_unlock(*(&val->utils.death));	
 }
 
 void	chronos(t_values *val, int flag)
@@ -37,7 +38,17 @@ void	chronos(t_values *val, int flag)
 		(uint64_t)1000 + (val->end.tv_usec) / 1000)));
 	else
 		val->time = ((((val->end.tv_sec) * (uint64_t)1000 + \
-		(val->end.tv_usec) / 1000)) - (val->utils.n_philos * 3));
+		(val->end.tv_usec) / 1000)));
+}
+
+void	hang_over(t_values *val, int wait)
+{
+	uint64_t end;
+
+	chronos(val, 1);
+	end = val->time - val->start + (wait / 1000);
+	while (val->time - val->start < end)
+		chronos(val, 1);	
 }
 
 int	check(int argc, char **argv)
@@ -62,20 +73,29 @@ void	death(t_values *val)
 {
 	int	i;
 
-	i = 0;
-	chronos(val, 1);
-	if (((val->last_meal - val->start) + (val->utils.t_die / 1000) \
-	< (val->time - val->start)) || val->utils.n_philos < 2)
+	usleep(1000);
+	while (1)
 	{
-		if (val->utils.n_philos < 2)
+		i = 0;
+		while (i < val[i].utils.n_philos)
 		{
-			usleep(val->utils.t_die);
 			chronos(val, 1);
+			if (((val[i].last_meal - val[i].start) + (val[i].utils.t_die / 1000) \
+			< (val[i].time - val[i].start)) || val[i].utils.n_philos < 2)
+			{
+				if (val[i].utils.n_philos < 2)
+				{
+					hang_over(val, val[i].utils.t_die);
+					chronos(val, 1);
+				}
+				pthread_mutex_lock(*(&val[i].utils.print));
+				printf("[%04llu] %i 🏴‍☠️ died\n", (val[i].time - val[i].start), \
+				val[i].index + 1);
+				*val[i].death_flag = 1;
+				pthread_mutex_unlock(*(&val[i].utils.print));
+				break ;
+			}
 		}
-		pthread_mutex_lock(*(&val->utils.print));
-		printf("[%04llu] %i 🏴‍☠️ died\n", (val->time - val->start), \
-		val->index + 1);
-		*val->death_flag = 1;
-		pthread_mutex_unlock(*(&val->utils.print));
+		break ;
 	}
 }

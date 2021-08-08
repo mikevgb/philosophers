@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/07 20:06:43 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/08 22:19:16 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,23 @@ typedef struct s_utils
 	pthread_mutex_t	*death;
 	int				t_arg;
 	int				n_philos;
+	int				m_eat;
+	// int				eat_c;
 	uint64_t		t_eat;
 	uint64_t		t_sleep;
-	int				m_eat;
 	uint64_t		t_die;
 }	t_utils;
 
 typedef struct s_values
 {
-	int				shared_knife;
+	pthread_mutex_t	**knife;
 	pthread_t		*philos;
 	int				*death_flag;
-	pthread_mutex_t	**knife;
 	int				odd_or_even;
-	uint64_t		last_meal;
 	int				index;
-	uint64_t		time;
 	t_utils			utils;
+	uint64_t		last_meal;
+	uint64_t		time;
 	uint64_t		start;
 	struct timeval	end;
 }	t_values;
@@ -62,6 +62,8 @@ void	death_mutex(t_values *values);
 void	singer(t_values *values, char *str);
 void	chronos(t_values *values, int flag);
 int		check(int argc, char **argv);
+void	hang_over(t_values *val, int wait);
+void	death_check(t_values *val);
 
 /* utils folder */
 
