@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/08 22:19:16 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/09 18:34:26 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,12 @@
 typedef struct s_utils
 {
 	pthread_mutex_t	*print;
-	pthread_mutex_t	*death;
+	int				quit_death;
 	int				t_arg;
 	int				n_philos;
 	int				m_eat;
-	// int				eat_c;
+	int				eat_c;
+	int				*feed;
 	uint64_t		t_eat;
 	uint64_t		t_sleep;
 	uint64_t		t_die;
@@ -48,14 +49,13 @@ typedef struct s_values
 
 int		main(int argc, char **argv);
 void	*loop(void *s_truct);
-void	death(t_values *val);
 
 /* threads_mutex.c */
 
 void	philo_threads(t_values **val);
 void	join_threads(t_values **values);
 void	singer_mutex(t_values *values);
-void	death_mutex(t_values *values);
+int		special_philo(t_values *val);
 
 /* utils.c */
 
@@ -63,7 +63,7 @@ void	singer(t_values *values, char *str);
 void	chronos(t_values *values, int flag);
 int		check(int argc, char **argv);
 void	hang_over(t_values *val, int wait);
-void	death_check(t_values *val);
+void	death(t_values *val);
 
 /* utils folder */
 

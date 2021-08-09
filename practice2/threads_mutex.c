@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 21:22:53 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/08 22:05:21 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/09 18:32:27 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void	philo_threads(t_values **val)
 		val[i]->knife[i] = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(val[i]->knife[i], NULL);
 		singer_mutex(val[i]);
-		death_mutex(val[i]);
 		i++;
 	}
 	i = 0;
@@ -61,10 +60,22 @@ void	singer_mutex(t_values *values)
 	values->utils.print = &print;
 }
 
-void	death_mutex(t_values *values)
+int	special_philo(t_values *val)
 {
-	static pthread_mutex_t	death;
-
-	pthread_mutex_init(&death, NULL);
-	values->utils.death = &death;
+	if (val->utils.eat_c == val->utils.m_eat && val->utils.m_eat > 0)
+	{
+		pthread_mutex_lock(*(&val->utils.print));
+		*val->utils.feed = 1;
+		pthread_mutex_unlock(*(&val->utils.print));
+		return (0);
+	}
+	if (val->utils.n_philos < 2)
+	{
+		pthread_mutex_lock(val->knife[(((val->index) + 1) \
+		% val->utils.n_philos)]);
+		singer(val, "⚔️  locked knife");
+		hang_over(val, val->utils.t_die);
+		return (0);
+	}
+	return (1);
 }

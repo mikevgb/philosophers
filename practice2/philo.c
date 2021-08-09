@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/08 22:19:32 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/09 21:02:46 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static void	even_eat(t_values *val)
 	pthread_mutex_lock(val->knife[val->index]);
 	singer(val, "⚔️  locked knife");
 	singer(val, "🥩 is eating");
+	val->utils.eat_c++;
 	chronos(val, 0);
 	hang_over(val, val->utils.t_eat);
 	pthread_mutex_unlock(val->knife[(((val->index) + 1) \
@@ -35,6 +36,7 @@ static void	odd_eat(t_values *val)
 	% val->utils.n_philos)]);
 	singer(val, "⚔️  locked knife");
 	singer(val, "🥩 is eating");
+	val->utils.eat_c++;
 	chronos(val, 0);
 	hang_over(val, val->utils.t_eat);
 	pthread_mutex_unlock(val->knife[val->index]);
@@ -58,10 +60,13 @@ void	*loop(void *s_truct)
 	t_values	*val;
 	static int	death_flag;
 	int			eat_count;
+	static int	feed;
 
 	val = (t_values *)s_truct;
 	death_flag = 0;
+	feed = 0;
 	val->death_flag = &death_flag;
+	val->utils.feed = &feed;
 	val->time = 0;
 	val->last_meal = 0;
 	eat_count = 0;
@@ -69,21 +74,49 @@ void	*loop(void *s_truct)
 	val->start = val->time;
 	while (!*val->death_flag)
 	{
-		if (val->utils.m_eat > 0)
-		{
-			eat_count++;
-			if (eat_count > val->utils.m_eat)
-				break ;
-		}
+		if (!special_philo(val))
+			break ;
 		dirty_eat(val);
 	}
 	return (NULL);
+}
+
+// void	ft_pepe(void)
+// {
+// 	system("leaks philo");
+// }
+
+void	freedom(t_values **val)
+{
+	int i;
+
+	i = 0;
+	pthread_mutex_destroy((*val)->utils.print);
+	while (i < (*val)->utils.n_philos)
+	{
+		pthread_detach(*val[i]->philos);
+		pthread_mutex_destroy(val[i]->knife[i]);
+		free (val[i]->philos);
+		free(val[i]->knife[i]);
+		i++;
+	}
+	free ((*val)->knife);
+	i = 0;
+	while(i < (*val)->utils.n_philos)
+	{
+		free(val[i]);
+		i++;
+	}
+	free(val);
 }
 
 int	main(int argc, char **argv)
 {
 	t_values	**val;
 	int			x;
+
+	// atexit(ft_pepe);
+	
 
 	x = 0;
 	check(argc, argv);
@@ -104,6 +137,6 @@ int	main(int argc, char **argv)
 	philo_threads(val);
 	death(*val);
 	join_threads(val);
-	
+	freedom(val);
 	return (0);
 }
