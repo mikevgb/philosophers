@@ -6,19 +6,19 @@
 #    By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/17 21:54:22 by mvillaes          #+#    #+#              #
-#    Updated: 2021/07/31 22:38:30 by mvillaes         ###   ########.fr        #
+#    Updated: 2021/06/24 20:18:27 by mvillaes         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-SRCS = 	philo.c \
-		threads_mutex.c \
-		utils.c \
-		utils/atoi_tuned.c \
-		utils/ft_bzero.c \
-		utils/ft_isdigit.c \
-		utils/ft_put.c
+SRCS = 	main.c \
+		parse.c \
+		./utils/ft_putstr.c \
+		./utils/ft_isdigit.c \
+		./utils/ft_bzero.c \
+		./utils/atoi_tuned.c
+
 
 OBJ = $(SRC:.c=.o)
 
@@ -39,9 +39,6 @@ fclean: clean
 
 debug:
 	gcc $(CFLAG) $(SANIT) $(SRCS) -o $(NAME)
-
-# rebug:
-# 	fclean debug
 
 re: fclean all
 

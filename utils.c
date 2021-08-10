@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/23 17:11:38 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/09 21:24:35 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/10 17:29:36 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,7 @@ void	singer(t_values *val, char *str)
 	chronos(val, 1);
 	pthread_mutex_lock(*(&val->utils.print));
 	if (!*val->death_flag)
-	{
-		
 		printf("[%04llu] %i %s\n", val->time - val->start, val->index + 1, str);
-	}
 	pthread_mutex_unlock(*(&val->utils.print));
 }
 
@@ -43,10 +40,9 @@ void	hang_over(t_values *val, int wait)
 	end = val->time - val->start + (wait / 1000);
 	while (val->time - val->start < end)
 	{
-		usleep(val->utils.n_philos);
+		usleep(val->utils.n_philos / 2);
 		chronos(val, 1);
 	}
-		
 }
 
 int	check(int argc, char **argv)

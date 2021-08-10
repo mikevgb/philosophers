@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 21:22:53 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/09 18:32:27 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/10 17:49:36 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,28 @@ int	special_philo(t_values *val)
 		return (0);
 	}
 	return (1);
+}
+
+void	freedom(t_values **val)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_destroy((*val)->utils.print);
+	while (i < (*val)->utils.n_philos)
+	{
+		pthread_detach(*val[i]->philos);
+		pthread_mutex_destroy(val[i]->knife[i]);
+		free (val[i]->philos);
+		free(val[i]->knife[i]);
+		i++;
+	}
+	free ((*val)->knife);
+	i = 0;
+	while (i < (*val)->utils.n_philos)
+	{
+		free(val[i]);
+		i++;
+	}
+	free(val);
 }

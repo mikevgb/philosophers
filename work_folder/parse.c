@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 21:58:24 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/06/18 21:08:47 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/06/24 20:18:59 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	parse(char **argv, t_data *data)
 	data->t_2_sleep = ft_atoi(argv[4]);
 	if (data->total_arg > 4)
 		data->eat_num = ft_atoi(argv[5]);
-	data->forks = data->n_philos;
-	data->left = (i + data->n_philos - 1) % 5;
-	data->right = (i + 1) % 5;
+	// data->forks = data->n_philos;
+	// data->left = (i + data->n_philos - 1) % 5;
+	// data->right = (i + 1) % 5;
 }

@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 18:13:06 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/06/23 21:50:32 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/06/28 18:59:44 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,17 @@ typedef struct s_data
 	int		t_2_sleep;
 	int		eat_num;
 	int		total_arg;
-	int		forks;
 	float	left;
 	float	right;
+	int		*forks;
 }	t_data;
 
-pthread_mutex_t	lock;
+// Mutex for the forks array
+pthread_mutex_t	fork_mutex = PTHREAD_MUTEX_INITIALIZER;
+// Signal that indicates when a fork becomes available
+pthread_cond_t fork_available = PTHREAD_COND_INITIALIZER;
+
 struct timeval start, end;
-// pthread_t	*newthread;
 
 void	ft_sleep(long i)
 {
@@ -46,35 +49,25 @@ void	ft_sleep(long i)
 
 void	*sleep_philo(int i)
 {
-	// int x;
-
-	// x = 0;
-	// while (x < 3)
-	// {
-		gettimeofday(&start, NULL);
-		ft_sleep(2000);
-		gettimeofday(&end, NULL);
-		printf("TM %ld philo %i is Sleeping\n", ((end.tv_sec * 1000 + end.tv_usec) - (start.tv_sec * 1000 + start.tv_usec)), i);
-	// }
+	gettimeofday(&start, NULL);
+	ft_sleep(2000);
+	gettimeofday(&end, NULL);
+	printf("TM %ld philo %i is Sleeping\n", ((end.tv_sec * 1000 + end.tv_usec) - (start.tv_sec * 1000 + start.tv_usec)), i);
 	return (NULL);
 }
 
 void	*eat(int i)
 {
-	
-	// int x;
-
-	// x = 0;
-	pthread_mutex_lock(&lock);
-	// while (x < 3)
-	// {
-		gettimeofday(&start, NULL);
+	t_data	data;
+	pthread_mutex_lock(&fork_mutex);
+	gettimeofday(&start, NULL);
+	if (data.forks[i] == 0 || data.forks[(i + 1) % 5] == 0)
+	{
 		ft_sleep(2000);
 		gettimeofday(&end, NULL);
 		printf("TM %ld philo %i is Eating\n", ((end.tv_sec * 1000 + end.tv_usec) - (start.tv_sec * 1000 + start.tv_usec)), i);
-		// x++;
-	// }
-	pthread_mutex_unlock(&lock);
+	}
+	pthread_mutex_unlock(&fork_mutex);
 	return (NULL);
 }
 
@@ -93,74 +86,64 @@ void	can_i_eat()
 
 void	*philo(void *arg)
 {
-	int *i;
+	int i;
 
-	i = arg;
-	// pthread_mutex_t	lock;
-	// pthread_mutex_init(&lock, NULL);
+	i = *(int *)arg;
 	while (1)
 	{
-		// pthread_mutex_lock(&lock);
-		think(*i);
-		eat(*i);
-		// pthread_mutex_unlock(&lock);
-		sleep_philo(*i);
-		
-		
-		// think(i, think_time);
+		think(i);
+		eat(i);
+		sleep_philo(i);
 	}
 	return (NULL);
 }
 
 int	main(void)
 {
-	pthread_t	*newthread;
+	pthread_t	*philos;
 	t_data		data;
 	int			i;
 	int			eat_time;
-	int			*philos;
+	// int			*philos;
 
-	if (pthread_mutex_init(&lock, NULL) != 0)
+	if (pthread_mutex_init(&fork_mutex, NULL) != 0)
 	{
 		printf("\n mutex init failed\n");
 		return (1);
 	}
-	
-	i = 0;
-	while (i < data.n_philos)
-	{
-		pthread_mutex_init(&lock[i], NULL);
-		i++;
-	}
+
 	eat_time = 5;
 	data.n_philos = 4;
-	newthread = (pthread_t*)malloc(sizeof(newthread) * data.n_philos);
-	philos = malloc(sizeof(data.n_philos));
-	i = 0;
-	while(i < data.n_philos)
-	{
-		philos[i] = i;
-		i++;
-	}
+	philos = (pthread_t*)malloc(sizeof(philos) * data.n_philos);
+	// philos = malloc(sizeof(data.n_philos));
+	data.forks = malloc(sizeof(data.n_philos));
+	//initialize forks
 	i = 0;
 	while (i < data.n_philos)
 	{
-		pthread_create(&newthread[i], NULL, philo, &philos[i]);
+		data.forks[i] = 0;
 		i++;
 	}
-	// pthread_create(&newthread[data.n_philos - 1], NULL, philo, &philos[i]);
+	// i = 0;
+	// while(i < data.n_philos)
+	// {
+	// 	philos[i] = i;
+	// 	i++;
+	// }
+	i = 0;
+	while (i < data.n_philos)
+	{
+		pthread_create(&philos[i], NULL, &philo, &i);
+		i++;
+	}
 	i = 0;
 	while(i < data.n_philos)
 	{
-		pthread_join(newthread[i], NULL);
+		pthread_join(philos[i], NULL);
 		i++;
 	}
-	
-	// pthread_join(newthread[1], NULL);
-	pthread_mutex_destroy(&lock);
-	// printf("threads done: *result=%d\n", *result);
-	pthread_detach(*newthread);
+	pthread_mutex_destroy(&fork_mutex);
+	pthread_detach(*philos);
 	// free (newthread);
-	// pthread_mutex_destroy(&lock);
 	return (0);
 }

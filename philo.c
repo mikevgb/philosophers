@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/09 21:02:46 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/10 17:48:45 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,42 +81,10 @@ void	*loop(void *s_truct)
 	return (NULL);
 }
 
-// void	ft_pepe(void)
-// {
-// 	system("leaks philo");
-// }
-
-void	freedom(t_values **val)
-{
-	int i;
-
-	i = 0;
-	pthread_mutex_destroy((*val)->utils.print);
-	while (i < (*val)->utils.n_philos)
-	{
-		pthread_detach(*val[i]->philos);
-		pthread_mutex_destroy(val[i]->knife[i]);
-		free (val[i]->philos);
-		free(val[i]->knife[i]);
-		i++;
-	}
-	free ((*val)->knife);
-	i = 0;
-	while(i < (*val)->utils.n_philos)
-	{
-		free(val[i]);
-		i++;
-	}
-	free(val);
-}
-
 int	main(int argc, char **argv)
 {
 	t_values	**val;
 	int			x;
-
-	// atexit(ft_pepe);
-	
 
 	x = 0;
 	check(argc, argv);

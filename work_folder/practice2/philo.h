@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/09 18:34:26 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/10 17:48:27 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	philo_threads(t_values **val);
 void	join_threads(t_values **values);
 void	singer_mutex(t_values *values);
 int		special_philo(t_values *val);
+void	freedom(t_values **val);
 
 /* utils.c */
 
