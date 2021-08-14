@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/23 17:11:38 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/10 17:29:36 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/14 18:31:54 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	hang_over(t_values *val, int wait)
 	end = val->time - val->start + (wait / 1000);
 	while (val->time - val->start < end)
 	{
-		usleep(val->utils.n_philos / 2);
+		usleep(val->utils.n_philos);
 		chronos(val, 1);
 	}
 }
@@ -80,6 +80,14 @@ void	death(t_values *val)
 	while (i < val[i].utils.n_philos)
 	{
 		chronos(val, 1);
+		if (val->utils.t_eat > val->utils.t_die)
+		{
+			hang_over(val, val[i].utils.t_die);
+			printf("[%04llu] %i 🏴‍☠️ died\n", (val[i].time - val[i].start), \
+			val[i].index + 1);
+			*val[i].death_flag = 1;
+			break ;
+		}	
 		if (((val[i].last_meal - val[i].start) + (val[i].utils.t_die / 1000) \
 		< (val[i].time - val[i].start)) || val[i].utils.n_philos < 2)
 		{

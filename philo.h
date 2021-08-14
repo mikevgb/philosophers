@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:08:50 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/10 17:48:27 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/12 20:59:44 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,3 +75,6 @@ void	ft_putstr(char *str);
 void	ft_put_error(char *str);
 
 #endif
+
+/* 3 100 2000 2000 */
+/* 3 700 200 200 */

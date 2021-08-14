@@ -6,7 +6,7 @@
 /*   By: mvillaes <mvillaes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 18:07:28 by mvillaes          #+#    #+#             */
-/*   Updated: 2021/08/11 17:44:21 by mvillaes         ###   ########.fr       */
+/*   Updated: 2021/08/14 18:14:32 by mvillaes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ void	*loop(void *s_truct)
 {
 	t_values	*val;
 	static int	death_flag;
-	int			eat_count;
 	static int	feed;
+	int			eat_count;
 
 	val = (t_values *)s_truct;
 	death_flag = 0;
